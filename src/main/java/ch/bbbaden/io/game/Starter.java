@@ -25,12 +25,26 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("Game yay");
+        settings.setTitle("Diep.io 2.0");
         settings.setWidth(800);
         settings.setHeight(600);
     }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    protected void initGame() {
+        getGameScene().setBackgroundColor(Color.WHITE);
+        getGameWorld().addEntityFactory(new Factory());
+
+        spawn("player", getAppWidth() / 2, getAppHeight() / 2 - 30);
+
+        run(() -> {
+            double x = getAppWidth();
+            double y = FXGLMath.random(0, getAppHeight() - 20);
+
+        }, Duration.seconds(0.15));
     }
 }
