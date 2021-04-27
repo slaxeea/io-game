@@ -20,6 +20,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.input.Input;
 import java.awt.TextField;
 import java.util.Map;
+import java.util.ResourceBundle.Control;
 import javafx.scene.text.Text;
 
 /**
@@ -27,12 +28,14 @@ import javafx.scene.text.Text;
  */
 public class Starter extends GameApplication {
 
+    private boolean autofire = false;
+    private int autofireCount = 0;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(false);
         settings.setTitle("Diep.io 2.0");
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setFullScreenAllowed(true);
     }
 
     public static void main(String[] args) {
@@ -47,11 +50,14 @@ public class Starter extends GameApplication {
         spawn("player", getAppWidth() / 2, getAppHeight() / 2 - 30);
 
         for (int i = 0; i < FXGLMath.random(1, 3); i++) {
-            spawn("food_octagon", FXGLMath.random(20, 500), FXGLMath.random(20, 500));
-            spawn("food_rectangle", FXGLMath.random(20, 500), FXGLMath.random(20, 500));
-            spawn("food_triangle", FXGLMath.random(20, 500), FXGLMath.random(20, 500));
+            spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
         }
-
+        for (int i = 0; i < FXGLMath.random(0, 3); i++) {
+            spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+        }
+        for (int i = 0; i < FXGLMath.random(0, 2); i++) {
+            spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+        }
         run(() -> {
             double x = getAppWidth();
             double y = FXGLMath.random(0, getAppHeight() - 20);
@@ -62,18 +68,19 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-2));
-        onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(2));
+        onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-1));
+        onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(1));
 
-        onKey(KeyCode.A, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(-2));
-        onKey(KeyCode.D, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(2));
+        onKey(KeyCode.A, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(-1));
+        onKey(KeyCode.D, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(1));
+
+        onKey(KeyCode.O, () -> this.autofire = this.autofire ? false : true);
 
         onBtnDown(MouseButton.PRIMARY, () -> {
             double y = getGameWorld().getSingleton(Entities.PLAYER).getY();
             double x = getGameWorld().getSingleton(Entities.PLAYER).getX();
             spawn("projectile", x - 10, y);
             Input input = getInput();
-            getGameWorld().getSingleton(Entities.PLAYER).rotateToVector(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()));
         });
     }
 
@@ -82,23 +89,41 @@ public class Starter extends GameApplication {
         onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_RECTANGLE, (bullet, enemy) -> {
             bullet.removeFromWorld();
             enemy.removeFromWorld();
-            spawn("food_rectangle", FXGLMath.random(20, 500), FXGLMath.random(20, 500));
+            spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
             FXGL.inc("score", +1);
         });
         onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_TRIANGLE, (bullet, enemy) -> {
             bullet.removeFromWorld();
             enemy.removeFromWorld();
-            spawn("food_triangle", FXGLMath.random(20, 500), FXGLMath.random(20, 500));
-            FXGL.inc("score", +1);
+            spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+            FXGL.inc("score", +2);
         });
+        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_OCTAGON, (bullet, enemy) -> {
+            bullet.removeFromWorld();
+            enemy.removeFromWorld();
+            spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+            FXGL.inc("score", +5);
+        });
+
         onCollisionBegin(Entities.PLAYER, Entities.FOOD_RECTANGLE, (player, rect) -> {
             FXGL.inc("hp", -1);
-            int hp = FXGL.geti("hp");
-
-            if (hp < 1) {
-                youDead();
-            }
+            checkIfDead();
         });
+        onCollisionBegin(Entities.PLAYER, Entities.FOOD_TRIANGLE, (player, rect) -> {
+            FXGL.inc("hp", -2);
+            checkIfDead();
+        });
+        onCollisionBegin(Entities.PLAYER, Entities.FOOD_OCTAGON, (player, rect) -> {
+            FXGL.inc("hp", -5);
+            checkIfDead();
+        });
+    }
+
+    private void checkIfDead() {
+        int hp = FXGL.geti("hp");
+        if (hp < 1) {
+            youDead();
+        }
     }
 
     @Override
@@ -136,5 +161,21 @@ public class Starter extends GameApplication {
 
     protected void youDead() {
         System.exit(0);
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        Input input = getInput();
+        getGameWorld().getSingleton(Entities.PLAYER).rotateToVector(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()));
+
+        if (autofire) {
+            autofireCount++;
+            if (autofireCount > 25) {
+                double y = getGameWorld().getSingleton(Entities.PLAYER).getY();
+                double x = getGameWorld().getSingleton(Entities.PLAYER).getX();
+                spawn("projectile", x - 10, y);
+                autofireCount = 0;
+            }
+        }
     }
 }
