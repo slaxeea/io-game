@@ -14,6 +14,8 @@ public class Stats {
     private int height;
     private int width;
     private int speed = 1;
+    private int reload = 25;
+    private int upgradeTokens = 0;
 
     public Stats() {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -49,4 +51,19 @@ public class Stats {
         this.speed = speed;
     }
 
+    public int getReload() {
+        return reload;
+    }
+
+    public void setReload(int reload) {
+        this.reload = reload;
+    }
+
+    public int getUpgradeTokens() {
+        return upgradeTokens;
+    }
+
+    public void setUpgradeTokens(int upgradeTokens) {
+        this.upgradeTokens = upgradeTokens;
+    }
 }
