@@ -24,6 +24,9 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.util.Map;
 import java.util.ResourceBundle.Control;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
@@ -40,6 +43,9 @@ public class Starter extends GameApplication {
     private int autofireCount = 0;
     private int HEIGHT;
     private int WIDTH;
+    private int speed = 1;
+    private int upgradeTokens = 0;
+    private int upgradeScore = 0;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -83,11 +89,11 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initInput() {
-        onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-1));
-        onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(1));
+        onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-speed));
+        onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(speed));
 
-        onKey(KeyCode.A, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(-1));
-        onKey(KeyCode.D, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(1));
+        onKey(KeyCode.A, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(-speed));
+        onKey(KeyCode.D, () -> getGameWorld().getSingleton(Entities.PLAYER).translateX(speed));
 
         onKey(KeyCode.O, () -> this.autofire = this.autofire ? false : true);
 
@@ -106,18 +112,21 @@ public class Starter extends GameApplication {
             enemy.removeFromWorld();
             spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
             FXGL.inc("score", +1);
+            upgradeScore += 1;
         });
         onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_TRIANGLE, (bullet, enemy) -> {
             bullet.removeFromWorld();
             enemy.removeFromWorld();
             spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
             FXGL.inc("score", +2);
+            upgradeScore += 2;
         });
         onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_OCTAGON, (bullet, enemy) -> {
             bullet.removeFromWorld();
             enemy.removeFromWorld();
             spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
             FXGL.inc("score", +5);
+            upgradeScore += 5;
         });
 
         onCollisionBegin(Entities.PLAYER, Entities.FOOD_RECTANGLE, (player, rect) -> {
@@ -144,9 +153,13 @@ public class Starter extends GameApplication {
     @Override
     protected void initUI() {
         Button buttonSpeed = new Button();
-        buttonSpeed.setText("+Speed");
-        buttonSpeed.setTranslateX(0);
-        buttonSpeed.setTranslateY(getAppHeight() - 30);
+        newButton(buttonSpeed, "Speed", 50, onUpgradeSpeed);
+
+        Button buttonHp = new Button();
+        newButton(buttonHp, "Hp", 80, onUpgradeHp);
+
+        Button buttonBulletSpeed = new Button();
+        newButton(buttonBulletSpeed, "Bullet Speed", 110, onUpgradeBulletSpeed);
 
         Text textScore = new Text();
         textScore.setText("Score: ");
@@ -157,7 +170,7 @@ public class Starter extends GameApplication {
         textHp.setTranslateX(0);
         textHp.setTranslateY(getAppHeight() - 10);
 
-        FXGL.getGameScene().addUINodes(textScore, textHp, buttonSpeed);
+        FXGL.getGameScene().addUINodes(textScore, textHp, buttonSpeed, buttonHp, buttonBulletSpeed);
 
         textHp.setFont(Font.font(15.0));
         textScore.setFont(Font.font(15.0));
@@ -165,6 +178,45 @@ public class Starter extends GameApplication {
         textScore.textProperty().bind(FXGL.getip("score").asString("Score: %d"));
         textHp.textProperty().bind(FXGL.getip("hp").asString("Hp: %d"));
     }
+
+    private void newButton(Button b, String text, int translateY, EventHandler evt) {
+        b.setText("+ " + text);
+        b.setTranslateX(0);
+        b.setTranslateY(getAppHeight() - translateY);
+        b.setOnMouseClicked(evt);
+        b.setDisable(true);
+    }
+    EventHandler onUpgradeSpeed = new EventHandler() {
+        @Override
+        public void handle(Event t) {
+            if (upgradeTokens > 0) {
+                speed++;
+                upgradeTokens--;
+            }
+        }
+    };
+
+    EventHandler onUpgradeHp = new EventHandler() {
+        @Override
+        public void handle(Event t) {
+            if (upgradeTokens > 0) {
+                FXGL.inc("hp", 5);
+                upgradeTokens--;
+            }
+        }
+    };
+    EventHandler onUpgradeBulletSpeed = new EventHandler() {
+        @Override
+        public void handle(Event t) {
+            if (upgradeTokens > 0) {
+                Stats instance = Stats.getInstance();
+                int newSpeed = instance.getBulletSpeed();
+                newSpeed += 50;
+                instance.setBulletSpeed(newSpeed);
+                upgradeTokens--;
+            }
+        }
+    };
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
@@ -190,5 +242,14 @@ public class Starter extends GameApplication {
                 autofireCount = 0;
             }
         }
+        boolean hasToken = (upgradeTokens > 0);
+
+        if (upgradeScore - 10 > 0) {
+            upgradeTokens++;
+            upgradeScore -= (FXGL.geti("score") / 2);
+        }
+        FXGL.getGameScene().getUINodes().get(2).setDisable(!hasToken);
+        FXGL.getGameScene().getUINodes().get(3).setDisable(!hasToken);
+        FXGL.getGameScene().getUINodes().get(4).setDisable(!hasToken);
     }
 }

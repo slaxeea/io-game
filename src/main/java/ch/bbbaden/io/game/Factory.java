@@ -1,5 +1,6 @@
 package ch.bbbaden.io.game;
 
+import com.almasb.fxgl.dsl.FXGL;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
@@ -47,13 +48,13 @@ public class Factory implements EntityFactory {
         Input input = getInput();
         var view = new Circle(10, Color.LIGHTBLUE);
         view.setStroke(Color.GRAY);
-
+        int bulletSpeed = Stats.getInstance().getBulletSpeed();
         return entityBuilder()
                 .type(Entities.PROJECTILE)
                 .from(data)
                 .viewWithBBox(view)
                 .collidable()
-                .with(new ProjectileComponent(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()), 250))
+                .with(new ProjectileComponent(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()), bulletSpeed))
                 .bbox(new HitBox(BoundingShape.box(10, 10)))
                 .zIndex(-10)
                 .build();
