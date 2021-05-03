@@ -41,22 +41,17 @@ public class Starter extends GameApplication {
 
     private boolean autofire = false;
     private int autofireCount = 0;
-    private int HEIGHT;
-    private int WIDTH;
-    private int speed = 1;
     private int upgradeTokens = 0;
     private int upgradeScore = 0;
+    private Stats stats = Stats.getInstance();
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(false);
         settings.setTitle("Diep.io 2.0");
         settings.setFullScreenAllowed(true);
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        HEIGHT = (int) (screen.getHeight() - ((screen.getHeight() / 100) * 20));
-        WIDTH = (int) (screen.getWidth() - ((screen.getWidth() / 100) * 20));
-        settings.setHeight(HEIGHT);
-        settings.setWidth(WIDTH);
+        settings.setHeight(stats.getHeight());
+        settings.setWidth(stats.getWidth());
     }
 
     public static void main(String[] args) {
@@ -89,6 +84,7 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initInput() {
+        int speed = stats.getSpeed();
         onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-speed));
         onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(speed));
 
@@ -190,7 +186,9 @@ public class Starter extends GameApplication {
         @Override
         public void handle(Event t) {
             if (upgradeTokens > 0) {
-                speed++;
+                int newSpeed = stats.getSpeed();
+                newSpeed++;
+                stats.setSpeed(newSpeed);
                 upgradeTokens--;
             }
         }
