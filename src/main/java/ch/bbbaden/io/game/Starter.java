@@ -14,9 +14,15 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.input.Input;
 import java.util.Map;
+import java.util.Set;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 
 import javafx.scene.control.Button;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -52,13 +58,13 @@ public class Starter extends GameApplication {
 
         spawn("player", getAppWidth() / 2, getAppHeight() / 2 - 30);
 
-        for (int i = 0; i < FXGLMath.random(1, 3); i++) {
+        for (int i = 0; i < FXGLMath.random(1, 5); i++) {
             spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
         }
-        for (int i = 0; i < FXGLMath.random(0, 3); i++) {
+        for (int i = 0; i < FXGLMath.random(1, 4); i++) {
             spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
         }
-        for (int i = 0; i < FXGLMath.random(0, 2); i++) {
+        for (int i = 0; i < FXGLMath.random(1, 3); i++) {
             spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
         }
         run(() -> {
@@ -170,6 +176,8 @@ public class Starter extends GameApplication {
         b.setOnMouseClicked(evth);
         b.setDisable(true);
         b.setMinWidth(100);
+        b.setAlignment(Pos.CENTER_LEFT);
+
         FXGL.getGameScene().addUINode(b);
     }
 

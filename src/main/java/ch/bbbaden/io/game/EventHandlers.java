@@ -82,5 +82,4 @@ public class EventHandlers {
     public EventHandler getOnUpgradeReload() {
         return onUpgradeReload;
     }
-
 }
