@@ -166,9 +166,10 @@ public class Starter extends GameApplication {
     private void newButton(Button b, String text, int translateY, EventHandler evth) {
         b.setText("+ " + text);
         b.setTranslateX(0);
-        b.setTranslateY(getAppHeight() - translateY);
+        b.setTranslateY(getAppHeight() - translateY - 10);
         b.setOnMouseClicked(evth);
         b.setDisable(true);
+        b.setMinWidth(100);
         FXGL.getGameScene().addUINode(b);
     }
 
