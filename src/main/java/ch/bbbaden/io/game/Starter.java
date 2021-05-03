@@ -18,9 +18,17 @@ import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.input.Input;
+import java.awt.Dimension;
+import java.awt.Label;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.util.Map;
 import java.util.ResourceBundle.Control;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -30,12 +38,19 @@ public class Starter extends GameApplication {
 
     private boolean autofire = false;
     private int autofireCount = 0;
+    private int HEIGHT;
+    private int WIDTH;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(false);
         settings.setTitle("Diep.io 2.0");
         settings.setFullScreenAllowed(true);
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        HEIGHT = (int) (screen.getHeight() - ((screen.getHeight() / 100) * 20));
+        WIDTH = (int) (screen.getWidth() - ((screen.getWidth() / 100) * 20));
+        settings.setHeight(HEIGHT);
+        settings.setWidth(WIDTH);
     }
 
     public static void main(String[] args) {
@@ -128,29 +143,27 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initUI() {
+        Button buttonSpeed = new Button();
+        buttonSpeed.setText("+Speed");
+        buttonSpeed.setTranslateX(0);
+        buttonSpeed.setTranslateY(getAppHeight() - 30);
+
         Text textScore = new Text();
         textScore.setText("Score: ");
-        textScore.setTranslateX(0);
+        textScore.setTranslateX((getAppWidth() / 2 + 10));
         textScore.setTranslateY(getAppHeight() - 10);
-
-        Text textPixels = new Text();
-        textPixels.setTranslateX(40);
-        textPixels.setTranslateY(getAppHeight() - 10);
 
         Text textHp = new Text("HP: ");
         textHp.setTranslateX(0);
-        textHp.setTranslateY(getAppHeight() - 30);
+        textHp.setTranslateY(getAppHeight() - 10);
 
-        Text textHp2 = new Text();
-        textHp2.setTranslateX(40);
-        textHp2.setTranslateY(getAppHeight() - 30);
+        FXGL.getGameScene().addUINodes(textScore, textHp, buttonSpeed);
 
-        FXGL.getGameScene().addUINode(textPixels);
-        FXGL.getGameScene().addUINode(textScore);
-        FXGL.getGameScene().addUINode(textHp);
-        FXGL.getGameScene().addUINode(textHp2);
-        textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("score").asString());
-        textHp2.textProperty().bind(FXGL.getWorldProperties().intProperty("hp").asString());
+        textHp.setFont(Font.font(15.0));
+        textScore.setFont(Font.font(15.0));
+
+        textScore.textProperty().bind(FXGL.getip("score").asString("Score: %d"));
+        textHp.textProperty().bind(FXGL.getip("hp").asString("Hp: %d"));
     }
 
     @Override

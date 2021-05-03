@@ -9,6 +9,8 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.geometry.Point2D;
@@ -33,6 +35,7 @@ public class Factory implements EntityFactory {
         return entityBuilder()
                 .type(Entities.PLAYER)
                 .from(data)
+                .bbox(new HitBox(BoundingShape.box(20, 20)))
                 .viewWithBBox(body)
                 .viewWithBBox(bot)
                 .collidable()
@@ -44,13 +47,14 @@ public class Factory implements EntityFactory {
         Input input = getInput();
         var view = new Circle(10, Color.LIGHTBLUE);
         view.setStroke(Color.GRAY);
-        // System.out.println(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()));
+
         return entityBuilder()
                 .type(Entities.PROJECTILE)
                 .from(data)
                 .viewWithBBox(view)
                 .collidable()
                 .with(new ProjectileComponent(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()), 250))
+                .bbox(new HitBox(BoundingShape.box(10, 10)))
                 .zIndex(-10)
                 .build();
     }
@@ -64,6 +68,7 @@ public class Factory implements EntityFactory {
                 .type(Entities.FOOD_RECTANGLE)
                 .from(data)
                 .zIndex(-2)
+                .bbox(new HitBox(BoundingShape.box(20, 20)))
                 .viewWithBBox(view)
                 .collidable()
                 .build();
@@ -77,6 +82,7 @@ public class Factory implements EntityFactory {
         return entityBuilder()
                 .type(Entities.FOOD_TRIANGLE)
                 .from(data)
+                .bbox(new HitBox(BoundingShape.box(20, 20)))
                 .zIndex(-2)
                 .viewWithBBox(view)
                 .collidable()
@@ -95,6 +101,7 @@ public class Factory implements EntityFactory {
                 .type(Entities.FOOD_OCTAGON)
                 .from(data)
                 .zIndex(-2)
+                .bbox(new HitBox(BoundingShape.box(20, 20)))
                 .viewWithBBox(view)
                 .viewWithBBox(view2)
                 .collidable()
