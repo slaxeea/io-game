@@ -1,11 +1,15 @@
 package ch.bbbaden.io.game;
 
+import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
+import com.almasb.fxgl.entity.Entity;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -103,7 +107,17 @@ public class Stats {
     }
 
     public void spawnFood(String type) {
-        spawn(type, FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+        Viewport viewport = getGameScene().getViewport();
+        int x = Math.abs((int) stats.getPlayer().getX());
+        int y = Math.abs((int) stats.getPlayer().getY());
+        int maxX = x + getWidth();
+        int maxY = y + getHeight();
+        int randX = FXGL.random(x, maxX) - maxX;
+        int randY = FXGL.random(y, maxY) - maxY;
+        spawn(type, -randX, -randY);
     }
 
+    public Entity getPlayer() {
+        return getGameWorld().getSingleton(Entities.PLAYER);
+    }
 }

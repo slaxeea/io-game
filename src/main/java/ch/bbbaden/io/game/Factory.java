@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getInput;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.FollowComponent;
+import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -77,6 +78,7 @@ public class Factory implements EntityFactory {
                 .viewWithBBox(view)
                 .collidable()
                 .with(new ProjectileComponent(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()), bulletSpeed))
+                .with(new OffscreenCleanComponent())
                 .bbox(new HitBox(BoundingShape.box(10, 10)))
                 .zIndex(-10)
                 .build();

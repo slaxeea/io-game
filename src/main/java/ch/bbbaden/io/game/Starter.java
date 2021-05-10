@@ -2,6 +2,7 @@ package ch.bbbaden.io.game;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.input.KeyCode;
@@ -168,5 +169,11 @@ public class Starter extends GameApplication {
         for (int i = 0; i < FXGL.getGameScene().getUINodes().toArray().length - 2; i++) {
             FXGL.getGameScene().getUINodes().get(i).setDisable(!hasToken);
         }
+
+        Viewport viewport = getGameScene().getViewport();
+        int x = (int) stats.getPlayer().getX();
+        int y = (int) stats.getPlayer().getY();
+        viewport.setX(x - (stats.getWidth()) / 2);
+        viewport.setY(y - (stats.getHeight()) / 2);
     }
 }
