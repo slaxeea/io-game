@@ -11,14 +11,9 @@ import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputSequence;
+import com.almasb.fxgl.input.UserAction;
 import java.util.Map;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-
-import javafx.scene.control.Button;
-
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /**
  * author simon kappeler Created At: 26.04.2021
@@ -27,8 +22,8 @@ public class Starter extends GameApplication {
 
     private boolean autofire = false;
     private int autofireCount = 0;
+    private boolean amg = false;
     private Stats stats = Stats.getInstance();
-    private EventHandlers evt = EventHandlers.getInstance();
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -65,6 +60,18 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initInput() {
+        Input input = FXGL.getInput();
+        var sequence = new InputSequence(KeyCode.W, KeyCode.W, KeyCode.S, KeyCode.S, KeyCode.A, KeyCode.D, KeyCode.A, KeyCode.D);
+        input.addAction(new UserAction("amogus") {
+            @Override
+            protected void onAction() {
+                if (!amg) {
+                    System.out.println("AMOGUS");
+                    amg = true;
+                }
+            }
+         ;
+        }, sequence);
         onKey(KeyCode.W, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(-stats.getSpeed()));
         onKey(KeyCode.S, () -> getGameWorld().getSingleton(Entities.PLAYER).translateY(stats.getSpeed()));
 
@@ -74,67 +81,21 @@ public class Starter extends GameApplication {
         onKey(KeyCode.O, () -> this.autofire = this.autofire ? false : true);
 
         onBtnDown(MouseButton.PRIMARY, () -> {
-            double y = getGameWorld().getSingleton(Entities.PLAYER).getY();
-            double x = getGameWorld().getSingleton(Entities.PLAYER).getX();
-            spawn("projectile", x - 10, y);
+            double y = stats.getPlayer().getY() + 10;
+            double x = stats.getPlayer().getX() + 10;
+            spawn("projectile", x, y);
         });
     }
 
     @Override
+
     protected void initPhysics() {
         new CollisionEvents().initphysics();
     }
 
     @Override
     protected void initUI() {
-        Button buttonSpeed = new Button();
-        newButton(buttonSpeed, "Speed", 50, evt.getOnUpgradeSpeed());
-
-        Button buttonHp = new Button();
-        newButton(buttonHp, "Hp", 80, evt.getOnUpgradeHp());
-
-        Button buttonBulletSpeed = new Button();
-        newButton(buttonBulletSpeed, "Bullet Speed", 110, evt.getOnUpgradeBulletSpeed());
-
-        Button buttonReload = new Button();
-        newButton(buttonReload, "Reload Speed", 140, evt.getOnUpgradeReload());
-
-        Button buttonRegen = new Button();
-        newButton(buttonRegen, "HP Regen", 170, evt.getOnUpgradeRegen());
-
-        Text textScore = new Text();
-        textScore.setText("Score: ");
-        textScore.setTranslateX((getAppWidth() / 2 + 10));
-        textScore.setTranslateY(getAppHeight() - 10);
-
-        Text textHp = new Text("HP: ");
-        textHp.setTranslateX(0);
-        textHp.setTranslateY(getAppHeight() - 10);
-
-        Text textUpgrade = new Text("Upgrade Tokens: ");
-        textUpgrade.setTranslateX(0);
-        textUpgrade.setTranslateY(20);
-
-        FXGL.getGameScene().addUINodes(textScore, textHp, textUpgrade);
-
-        textHp.setFont(Font.font(15.0));
-        textScore.setFont(Font.font(15.0));
-
-        textUpgrade.textProperty().bind(FXGL.getip("upgradeTokens").asString("Upgrade Tokens: %d"));
-        textScore.textProperty().bind(FXGL.getip("score").asString("Score: %d"));
-        textHp.textProperty().bind(FXGL.getip("hp").asString("Hp: %d"));
-    }
-
-    private void newButton(Button b, String text, int translateY, EventHandler evth) {
-        b.setText("+ " + text);
-        b.setTranslateX(0);
-        b.setTranslateY(getAppHeight() - translateY - 10);
-        b.setOnMouseClicked(evth);
-        b.setDisable(true);
-        b.setMinWidth(100);
-        b.setAlignment(Pos.CENTER_LEFT);
-
-        FXGL.getGameScene().addUINode(b);
+        new GUI();
     }
 
     @Override
@@ -166,7 +127,7 @@ public class Starter extends GameApplication {
         }
 
         boolean hasToken = (stats.getUpgradeTokens() > 0);
-        for (int i = 0; i < FXGL.getGameScene().getUINodes().toArray().length - 2; i++) {
+        for (int i = 0; i < FXGL.getGameScene().getUINodes().toArray().length - 3; i++) {
             FXGL.getGameScene().getUINodes().get(i).setDisable(!hasToken);
         }
 

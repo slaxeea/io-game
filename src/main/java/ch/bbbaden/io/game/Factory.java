@@ -26,6 +26,7 @@ public class Factory implements EntityFactory {
 
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
+        Stats stats = Stats.getInstance();
         var body = new Circle(25, Color.LIGHTBLUE);
         body.setStroke(Color.GRAY);
 
@@ -38,30 +39,21 @@ public class Factory implements EntityFactory {
                 .type(Entities.PLAYER)
                 .from(data)
                 .bbox(new HitBox(BoundingShape.box(20, 20)))
-                .viewWithBBox(body)
-                .viewWithBBox(bot)
+                .view("player_lvl" + stats.getPlayerLvl() + ".png")
+                .rotationOrigin(35, 35)
                 .collidable()
                 .build();
     }
 
     @Spawns("enemy")
     public Entity newEnemy(SpawnData data) {
-        var body = new Circle(25, Color.RED);
-        body.setStroke(Color.GRAY);
-
-        var bot = new Rectangle(10, 20, Color.GRAY);
-        bot.setStroke(Color.GRAY);
-        bot.setTranslateX(20);
-        bot.setTranslateY(-10);
         Stats stats = Stats.getInstance();
-
         return entityBuilder()
                 .type(Entities.ENEMY)
                 .from(data)
                 .with(new FollowComponent(FXGL.getGameWorld().getSingleton(Entities.PLAYER), 50, 0, 0))
-                .bbox(new HitBox(BoundingShape.box(20, 20)))
-                .viewWithBBox(body)
-                .viewWithBBox(bot)
+                .bbox(new HitBox(BoundingShape.box(40, 40)))
+                .view("enemy_lvl" + stats.getEnemyLvl() + ".png")
                 .collidable()
                 .build();
     }
@@ -86,49 +78,37 @@ public class Factory implements EntityFactory {
 
     @Spawns("food_rectangle")
     public Entity newFood_rectangle(SpawnData data) {
-        var view = new Rectangle(30, 30, Color.YELLOW);
-        view.setStroke(Color.GRAY);
-
         return entityBuilder()
                 .type(Entities.FOOD_RECTANGLE)
                 .from(data)
                 .zIndex(-2)
-                .bbox(new HitBox(BoundingShape.box(20, 20)))
-                .viewWithBBox(view)
+                .bbox(new HitBox(BoundingShape.box(40, 40)))
+                .view("rectangle.png")
                 .collidable()
                 .build();
     }
 
     @Spawns("food_triangle")
     public Entity newFood_triangle(SpawnData data) {
-        var view = new Rectangle(30, 30, Color.RED);
-        view.setStroke(Color.GRAY);
-
         return entityBuilder()
                 .type(Entities.FOOD_TRIANGLE)
                 .from(data)
-                .bbox(new HitBox(BoundingShape.box(20, 20)))
+                .bbox(new HitBox(BoundingShape.box(40, 40)))
                 .zIndex(-2)
-                .viewWithBBox(view)
+                .view("triangle.png")
                 .collidable()
                 .build();
     }
 
     @Spawns("food_octagon")
     public Entity newFood_octagon(SpawnData data) {
-        var view = new Rectangle(30, 30, Color.PURPLE);
-        var view2 = new Rectangle(30, 30, Color.PURPLE);
-        view.setStroke(Color.GRAY);
-        view2.setStroke(Color.GRAY);
-        view2.setRotate(45);
 
         return entityBuilder()
                 .type(Entities.FOOD_OCTAGON)
                 .from(data)
                 .zIndex(-2)
-                .bbox(new HitBox(BoundingShape.box(20, 20)))
-                .viewWithBBox(view)
-                .viewWithBBox(view2)
+                .bbox(new HitBox(BoundingShape.box(50, 70)))
+                .view("pentagon.png")
                 .collidable()
                 .build();
     }

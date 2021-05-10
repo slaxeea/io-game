@@ -1,6 +1,9 @@
 package ch.bbbaden.io.game;
 
 import com.almasb.fxgl.dsl.FXGL;
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 
@@ -74,6 +77,16 @@ public class EventHandlers {
 
         }
     };
+    EventHandler onUpgradePlayer = new EventHandler() {
+        @Override
+        public void handle(Event t) {
+            stats.incPlayerLvl(1);
+            int x = (int) stats.getPlayer().getX();
+            int y = (int) stats.getPlayer().getY();
+            spawn("player", x, y);
+            stats.getPlayer().removeFromWorld();
+        }
+    };
 
     public EventHandler getOnUpgradeSpeed() {
         return onUpgradeSpeed;
@@ -93,6 +106,10 @@ public class EventHandlers {
 
     public EventHandler getOnUpgradeRegen() {
         return onUpgradeRegen;
+    }
+
+    public EventHandler getOnUpgradePlayer() {
+        return onUpgradePlayer;
     }
 
 }

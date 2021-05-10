@@ -13,6 +13,9 @@ import com.almasb.fxgl.entity.Entity;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 
 /**
  * author simon kappeler Created At: 03.05.2021
@@ -28,6 +31,8 @@ public class Stats {
     private int reload = 25;
     private int upgradeTokens = 0;
     private int upgradeScore = 0;
+    private int playerLvl = 1;
+    private int enemyLvl = 1;
 
     public Stats() {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -41,6 +46,18 @@ public class Stats {
 
     public int getBulletSpeed() {
         return bulletSpeed;
+    }
+
+    public int getEnemyLvl() {
+        return FXGL.random(1, 7);
+    }
+
+    public void setEnemyLvl(int enemyLvl) {
+        this.enemyLvl = enemyLvl;
+    }
+
+    public void incEnemyLvl(int enemyLvl) {
+        this.enemyLvl += enemyLvl;
     }
 
     public void setBulletSpeed(int bulletSpeed) {
@@ -95,6 +112,18 @@ public class Stats {
         upgradeScore += amount;
     }
 
+    public int getPlayerLvl() {
+        return playerLvl;
+    }
+
+    public void setPlayerLvl(int playerLvl) {
+        this.playerLvl = playerLvl;
+    }
+
+    public void incPlayerLvl(int playerLvl) {
+        this.playerLvl += playerLvl;
+    }
+
     public void checkIfDead() {
         int hp = FXGL.geti("hp");
         if (hp < 1) {
@@ -119,5 +148,17 @@ public class Stats {
 
     public Entity getPlayer() {
         return getGameWorld().getSingleton(Entities.PLAYER);
+    }
+
+    public void newButton(Button b, String text, int translateY, EventHandler evth) {
+        b.setText("+ " + text);
+        b.setTranslateX(0);
+        b.setTranslateY(getAppHeight() - translateY - 10);
+        b.setOnMouseClicked(evth);
+        b.setDisable(true);
+        b.setMinWidth(100);
+        b.setAlignment(Pos.CENTER_LEFT);
+
+        FXGL.getGameScene().addUINode(b);
     }
 }
