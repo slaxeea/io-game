@@ -19,6 +19,7 @@ public class EventHandlers {
     public void minusToken() {
         int newTokens = stats.getUpgradeTokens();
         newTokens--;
+        FXGL.inc("upgradeTokens", -1);
         stats.setUpgradeTokens(newTokens);
     }
     EventHandler onUpgradeSpeed = new EventHandler() {
@@ -67,6 +68,13 @@ public class EventHandlers {
         }
     };
 
+    EventHandler onUpgradeRegen = new EventHandler() {
+        @Override
+        public void handle(Event t) {
+
+        }
+    };
+
     public EventHandler getOnUpgradeSpeed() {
         return onUpgradeSpeed;
     }
@@ -82,4 +90,9 @@ public class EventHandlers {
     public EventHandler getOnUpgradeReload() {
         return onUpgradeReload;
     }
+
+    public EventHandler getOnUpgradeRegen() {
+        return onUpgradeRegen;
+    }
+
 }

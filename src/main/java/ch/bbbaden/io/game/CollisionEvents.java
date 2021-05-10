@@ -1,0 +1,61 @@
+package ch.bbbaden.io.game;
+
+import com.almasb.fxgl.dsl.FXGL;
+
+import static com.almasb.fxgl.dsl.FXGL.onCollisionBegin;
+
+/**
+ * author simon kappeler Created At: 04.05.2021
+ */
+public class CollisionEvents {
+
+    Stats stats = Stats.getInstance();
+
+    public void initphysics() {
+        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_RECTANGLE, (bullet, enemy) -> {
+            bullet.removeFromWorld();
+            enemy.removeFromWorld();
+            stats.spawnFood("food_rectangle");
+            FXGL.inc("score", +1);
+            stats.incUpgradeScore(1);
+        });
+        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_TRIANGLE, (bullet, enemy) -> {
+            bullet.removeFromWorld();
+            enemy.removeFromWorld();
+            stats.spawnFood("food_triangle");
+            FXGL.inc("score", +2);
+            stats.incUpgradeScore(2);
+        });
+        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_OCTAGON, (bullet, enemy) -> {
+            bullet.removeFromWorld();
+            enemy.removeFromWorld();
+            stats.spawnFood("food_octagon");
+            FXGL.inc("score", +5);
+            stats.incUpgradeScore(5);
+        });
+
+        onCollisionBegin(Entities.PLAYER, Entities.FOOD_RECTANGLE, (player, rect) -> {
+            FXGL.inc("hp", -1);
+            stats.checkIfDead();
+        });
+        onCollisionBegin(Entities.PLAYER, Entities.FOOD_TRIANGLE, (player, rect) -> {
+            FXGL.inc("hp", -2);
+            stats.checkIfDead();
+        });
+        onCollisionBegin(Entities.PLAYER, Entities.FOOD_OCTAGON, (player, rect) -> {
+            FXGL.inc("hp", -5);
+            stats.checkIfDead();
+        });
+        onCollisionBegin(Entities.PLAYER, Entities.ENEMY, (player, rect) -> {
+            FXGL.inc("hp", -5);
+            rect.removeFromWorld();
+            stats.spawnFood("enemy");
+            stats.checkIfDead();
+        });
+        onCollisionBegin(Entities.PROJECTILE, Entities.ENEMY, (player, rect) -> {
+            rect.removeFromWorld();
+            stats.spawnFood("enemy");
+            FXGL.inc("score", 10);
+        });
+    }
+}

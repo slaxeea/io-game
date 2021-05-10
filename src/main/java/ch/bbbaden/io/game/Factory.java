@@ -1,9 +1,11 @@
 package ch.bbbaden.io.game;
 
-import com.almasb.fxgl.dsl.FXGL;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
+
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.FollowComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -12,9 +14,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import java.util.HashSet;
-import java.util.Set;
-import javafx.geometry.Point2D;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
@@ -36,6 +36,28 @@ public class Factory implements EntityFactory {
         return entityBuilder()
                 .type(Entities.PLAYER)
                 .from(data)
+                .bbox(new HitBox(BoundingShape.box(20, 20)))
+                .viewWithBBox(body)
+                .viewWithBBox(bot)
+                .collidable()
+                .build();
+    }
+
+    @Spawns("enemy")
+    public Entity newEnemy(SpawnData data) {
+        var body = new Circle(25, Color.RED);
+        body.setStroke(Color.GRAY);
+
+        var bot = new Rectangle(10, 20, Color.GRAY);
+        bot.setStroke(Color.GRAY);
+        bot.setTranslateX(20);
+        bot.setTranslateY(-10);
+        Stats stats = Stats.getInstance();
+
+        return entityBuilder()
+                .type(Entities.ENEMY)
+                .from(data)
+                .with(new FollowComponent(FXGL.getGameWorld().getSingleton(Entities.PLAYER), 50, 0, 0))
                 .bbox(new HitBox(BoundingShape.box(20, 20)))
                 .viewWithBBox(body)
                 .viewWithBBox(bot)

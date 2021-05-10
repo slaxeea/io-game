@@ -1,6 +1,5 @@
 package ch.bbbaden.io.game;
 
-import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -8,21 +7,14 @@ import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.input.Input;
 import java.util.Map;
-import java.util.Set;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 
 import javafx.scene.control.Button;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -34,7 +26,6 @@ public class Starter extends GameApplication {
 
     private boolean autofire = false;
     private int autofireCount = 0;
-    private int upgradeScore = 0;
     private Stats stats = Stats.getInstance();
     private EventHandlers evt = EventHandlers.getInstance();
 
@@ -57,22 +48,18 @@ public class Starter extends GameApplication {
         getGameWorld().addEntityFactory(new Factory());
 
         spawn("player", getAppWidth() / 2, getAppHeight() / 2 - 30);
+        stats.spawnFood("enemy");
+        stats.spawnFood("enemy");
 
-        for (int i = 0; i < FXGLMath.random(1, 5); i++) {
-            spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+        for (int i = 0; i < FXGLMath.random(2, 5); i++) {
+            stats.spawnFood("food_rectangle");
         }
         for (int i = 0; i < FXGLMath.random(1, 4); i++) {
-            spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+            stats.spawnFood("food_triangle");
         }
         for (int i = 0; i < FXGLMath.random(1, 3); i++) {
-            spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
+            stats.spawnFood("food_octagon");
         }
-        run(() -> {
-            double x = getAppWidth();
-            double y = FXGLMath.random(0, getAppHeight() - 20);
-
-        }, Duration.seconds(0.15));
-
     }
 
     @Override
@@ -94,47 +81,7 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_RECTANGLE, (bullet, enemy) -> {
-            bullet.removeFromWorld();
-            enemy.removeFromWorld();
-            spawn("food_rectangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
-            FXGL.inc("score", +1);
-            upgradeScore += 1;
-        });
-        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_TRIANGLE, (bullet, enemy) -> {
-            bullet.removeFromWorld();
-            enemy.removeFromWorld();
-            spawn("food_triangle", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
-            FXGL.inc("score", +2);
-            upgradeScore += 2;
-        });
-        onCollisionBegin(Entities.PROJECTILE, Entities.FOOD_OCTAGON, (bullet, enemy) -> {
-            bullet.removeFromWorld();
-            enemy.removeFromWorld();
-            spawn("food_octagon", FXGLMath.random(20, getAppWidth() - 20), FXGLMath.random(20, getAppHeight() - 20));
-            FXGL.inc("score", +5);
-            upgradeScore += 5;
-        });
-
-        onCollisionBegin(Entities.PLAYER, Entities.FOOD_RECTANGLE, (player, rect) -> {
-            FXGL.inc("hp", -1);
-            checkIfDead();
-        });
-        onCollisionBegin(Entities.PLAYER, Entities.FOOD_TRIANGLE, (player, rect) -> {
-            FXGL.inc("hp", -2);
-            checkIfDead();
-        });
-        onCollisionBegin(Entities.PLAYER, Entities.FOOD_OCTAGON, (player, rect) -> {
-            FXGL.inc("hp", -5);
-            checkIfDead();
-        });
-    }
-
-    private void checkIfDead() {
-        int hp = FXGL.geti("hp");
-        if (hp < 1) {
-            youDead();
-        }
+        new CollisionEvents().initphysics();
     }
 
     @Override
@@ -151,6 +98,9 @@ public class Starter extends GameApplication {
         Button buttonReload = new Button();
         newButton(buttonReload, "Reload Speed", 140, evt.getOnUpgradeReload());
 
+        Button buttonRegen = new Button();
+        newButton(buttonRegen, "HP Regen", 170, evt.getOnUpgradeRegen());
+
         Text textScore = new Text();
         textScore.setText("Score: ");
         textScore.setTranslateX((getAppWidth() / 2 + 10));
@@ -160,11 +110,16 @@ public class Starter extends GameApplication {
         textHp.setTranslateX(0);
         textHp.setTranslateY(getAppHeight() - 10);
 
-        FXGL.getGameScene().addUINodes(textScore, textHp);
+        Text textUpgrade = new Text("Upgrade Tokens: ");
+        textUpgrade.setTranslateX(0);
+        textUpgrade.setTranslateY(20);
+
+        FXGL.getGameScene().addUINodes(textScore, textHp, textUpgrade);
 
         textHp.setFont(Font.font(15.0));
         textScore.setFont(Font.font(15.0));
 
+        textUpgrade.textProperty().bind(FXGL.getip("upgradeTokens").asString("Upgrade Tokens: %d"));
         textScore.textProperty().bind(FXGL.getip("score").asString("Score: %d"));
         textHp.textProperty().bind(FXGL.getip("hp").asString("Hp: %d"));
     }
@@ -183,12 +138,9 @@ public class Starter extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
+        vars.put("upgradeTokens", 0);
         vars.put("score", 0);
         vars.put("hp", 10);
-    }
-
-    protected void youDead() {
-        System.exit(0);
     }
 
     @Override
@@ -205,17 +157,16 @@ public class Starter extends GameApplication {
                 autofireCount = 0;
             }
         }
-        boolean hasToken = (stats.getUpgradeTokens() > 0);
 
-        if (upgradeScore - 10 > 0) {
-            int newTokens = stats.getUpgradeTokens();
-            newTokens++;
-            stats.setUpgradeTokens(newTokens);
-            upgradeScore -= (FXGL.geti("score") / 2);
+        if (stats.getUpgradeScore() - 10 > 0) {
+            stats.incUpgradeToken(1);
+            FXGL.inc("upgradeTokens", 1);
+            stats.incUpgradeScore(-(FXGL.geti("score") / 2));
         }
-        FXGL.getGameScene().getUINodes().get(2).setDisable(!hasToken);
-        FXGL.getGameScene().getUINodes().get(3).setDisable(!hasToken);
-        FXGL.getGameScene().getUINodes().get(0).setDisable(!hasToken);
-        FXGL.getGameScene().getUINodes().get(1).setDisable(!hasToken);
+
+        boolean hasToken = (stats.getUpgradeTokens() > 0);
+        for (int i = 0; i < FXGL.getGameScene().getUINodes().toArray().length - 2; i++) {
+            FXGL.getGameScene().getUINodes().get(i).setDisable(!hasToken);
+        }
     }
 }
