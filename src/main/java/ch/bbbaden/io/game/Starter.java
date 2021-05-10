@@ -66,7 +66,7 @@ public class Starter extends GameApplication {
             @Override
             protected void onAction() {
                 if (!amg) {
-                    System.out.println("AMOGUS");
+                    stats.spawnFood("easteregg");
                     amg = true;
                 }
             }

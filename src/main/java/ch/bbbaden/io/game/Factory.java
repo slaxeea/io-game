@@ -112,4 +112,14 @@ public class Factory implements EntityFactory {
                 .collidable()
                 .build();
     }
+
+    @Spawns("easteregg")
+    public Entity newEasteregg(SpawnData data) {
+
+        return entityBuilder()
+                .type(Entities.FOOD_OCTAGON)
+                .from(data)
+                .view("sus.png")
+                .build();
+    }
 }
