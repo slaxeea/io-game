@@ -56,6 +56,7 @@ public class CollisionEvents {
             rect.removeFromWorld();
             stats.spawnFood("enemy");
             FXGL.inc("score", 10);
+            stats.incUpgradeScore(5);
         });
     }
 }

@@ -135,6 +135,18 @@ public class Stats {
         System.exit(0);
     }
 
+    public void randomFood() {
+        for (int i = 0; i < FXGLMath.random(2, 5); i++) {
+            stats.spawnFood("food_rectangle");
+        }
+        for (int i = 0; i < FXGLMath.random(1, 4); i++) {
+            stats.spawnFood("food_triangle");
+        }
+        for (int i = 0; i < FXGLMath.random(1, 3); i++) {
+            stats.spawnFood("food_octagon");
+        }
+    }
+
     public void spawnFood(String type) {
         Viewport viewport = getGameScene().getViewport();
         int x = Math.abs((int) stats.getPlayer().getX());

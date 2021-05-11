@@ -14,6 +14,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputSequence;
 import com.almasb.fxgl.input.UserAction;
 import java.util.Map;
+import javafx.geometry.Rectangle2D;
 
 /**
  * author simon kappeler Created At: 26.04.2021
@@ -47,15 +48,7 @@ public class Starter extends GameApplication {
         stats.spawnFood("enemy");
         stats.spawnFood("enemy");
 
-        for (int i = 0; i < FXGLMath.random(2, 5); i++) {
-            stats.spawnFood("food_rectangle");
-        }
-        for (int i = 0; i < FXGLMath.random(1, 4); i++) {
-            stats.spawnFood("food_triangle");
-        }
-        for (int i = 0; i < FXGLMath.random(1, 3); i++) {
-            stats.spawnFood("food_octagon");
-        }
+        stats.randomFood();
     }
 
     @Override
@@ -120,7 +113,7 @@ public class Starter extends GameApplication {
             }
         }
 
-        if (stats.getUpgradeScore() - 10 > 0) {
+        if (stats.getUpgradeScore() > 10) {
             stats.incUpgradeToken(1);
             FXGL.inc("upgradeTokens", 1);
             stats.incUpgradeScore(-(FXGL.geti("score") / 2));
