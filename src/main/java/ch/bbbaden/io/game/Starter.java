@@ -14,6 +14,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputSequence;
 import com.almasb.fxgl.input.UserAction;
 import java.util.Map;
+import java.util.Random;
 import javafx.geometry.Rectangle2D;
 
 /**
@@ -130,4 +131,5 @@ public class Starter extends GameApplication {
         viewport.setX(x - (stats.getWidth()) / 2);
         viewport.setY(y - (stats.getHeight()) / 2);
     }
+
 }

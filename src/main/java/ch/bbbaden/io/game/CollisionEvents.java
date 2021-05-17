@@ -53,6 +53,7 @@ public class CollisionEvents {
             stats.checkIfDead();
         });
         onCollisionBegin(Entities.PROJECTILE, Entities.ENEMY, (player, rect) -> {
+            player.removeFromWorld();
             rect.removeFromWorld();
             stats.spawnFood("enemy");
             FXGL.inc("score", 10);

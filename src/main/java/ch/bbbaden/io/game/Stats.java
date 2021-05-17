@@ -13,9 +13,11 @@ import com.almasb.fxgl.entity.Entity;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Random;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 
 /**
  * author simon kappeler Created At: 03.05.2021
@@ -172,5 +174,15 @@ public class Stats {
         b.setAlignment(Pos.CENTER_LEFT);
 
         FXGL.getGameScene().addUINode(b);
+    }
+
+    public void changeBackgroundColour() {
+        ColourLib cl = new ColourLib();
+        Random rand = new Random();
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();
+        Color color = Color.color(r, g, b);
+        FXGL.getGameScene().setBackgroundColor(cl.getColour());
     }
 }

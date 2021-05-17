@@ -24,6 +24,7 @@ public class EventHandlers {
         newTokens--;
         FXGL.inc("upgradeTokens", -1);
         stats.setUpgradeTokens(newTokens);
+        stats.changeBackgroundColour();
     }
     EventHandler onUpgradeSpeed = new EventHandler() {
         @Override
