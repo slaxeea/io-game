@@ -3,7 +3,6 @@ package ch.bbbaden.io.game;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.Viewport;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -15,7 +14,6 @@ import com.almasb.fxgl.input.InputSequence;
 import com.almasb.fxgl.input.UserAction;
 import java.util.Map;
 import java.util.Random;
-import javafx.geometry.Rectangle2D;
 
 /**
  * author simon kappeler Created At: 26.04.2021
@@ -26,6 +24,8 @@ public class Starter extends GameApplication {
     private int autofireCount = 0;
     private boolean amg = false;
     private Stats stats = Stats.getInstance();
+    int fps;
+    long lastTime;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -97,10 +97,12 @@ public class Starter extends GameApplication {
         vars.put("upgradeTokens", 0);
         vars.put("score", 0);
         vars.put("hp", 10);
+        vars.put("fps", 0);
     }
 
     @Override
     protected void onUpdate(double tpf) {
+        lastTime = System.nanoTime();
         Input input = getInput();
         getGameWorld().getSingleton(Entities.PLAYER).rotateToVector(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()));
 
@@ -130,6 +132,14 @@ public class Starter extends GameApplication {
         int y = (int) stats.getPlayer().getY();
         viewport.setX(x - (stats.getWidth()) / 2);
         viewport.setY(y - (stats.getHeight()) / 2);
-    }
 
+        Random r = new Random();
+        if (r.nextInt(10000) == 2) {
+            stats.spawnFood("enemy");
+        }
+
+        fps = (int) (1000000000 / (System.nanoTime() - lastTime));
+        lastTime = System.nanoTime();
+        // System.out.println("fps: " + fps);
+    }
 }

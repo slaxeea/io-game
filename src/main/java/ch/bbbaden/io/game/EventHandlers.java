@@ -81,11 +81,14 @@ public class EventHandlers {
     EventHandler onUpgradePlayer = new EventHandler() {
         @Override
         public void handle(Event t) {
-            stats.incPlayerLvl(1);
-            int x = (int) stats.getPlayer().getX();
-            int y = (int) stats.getPlayer().getY();
-            spawn("player", x, y);
-            stats.getPlayer().removeFromWorld();
+            if (stats.getPlayerLvl() + 1 <= 8) {
+                stats.incPlayerLvl(1);
+                int x = (int) stats.getPlayer().getX();
+                int y = (int) stats.getPlayer().getY();
+                spawn("player", x, y);
+                stats.getPlayer().removeFromWorld();
+                minusToken();
+            }
         }
     };
 

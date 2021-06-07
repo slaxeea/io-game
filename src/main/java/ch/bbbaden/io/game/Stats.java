@@ -15,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Random;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -140,12 +141,15 @@ public class Stats {
     public void randomFood() {
         for (int i = 0; i < FXGLMath.random(2, 5); i++) {
             stats.spawnFood("food_rectangle");
+            stats.spawnFood("enemy_triangle");
         }
         for (int i = 0; i < FXGLMath.random(1, 4); i++) {
             stats.spawnFood("food_triangle");
+            stats.spawnFood("med_small");
         }
         for (int i = 0; i < FXGLMath.random(1, 3); i++) {
             stats.spawnFood("food_octagon");
+            stats.spawnFood("med_big");
         }
     }
 
@@ -184,5 +188,20 @@ public class Stats {
         float b = rand.nextFloat();
         Color color = Color.color(r, g, b);
         FXGL.getGameScene().setBackgroundColor(cl.getColour());
+    }
+
+    public Point2D getCenter() {
+
+        Viewport viewport = getGameScene().getViewport();
+
+        double x = viewport.getX() / 2;
+        double y = viewport.getY() / 2;
+
+        return new Point2D(x, y);
+    }
+
+    public void shake() {
+        Viewport viewport = getGameScene().getViewport();
+        viewport.shake(1, 1);
     }
 }

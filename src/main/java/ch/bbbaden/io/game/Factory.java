@@ -5,6 +5,8 @@ import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
 
 import com.almasb.fxgl.dsl.FXGL;
+import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import com.almasb.fxgl.dsl.components.AutoRotationComponent;
 import com.almasb.fxgl.dsl.components.FollowComponent;
 import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
@@ -12,9 +14,12 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -27,13 +32,6 @@ public class Factory implements EntityFactory {
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
         Stats stats = Stats.getInstance();
-        var body = new Circle(25, Color.LIGHTBLUE);
-        body.setStroke(Color.GRAY);
-
-        var bot = new Rectangle(10, 20, Color.GRAY);
-        bot.setStroke(Color.GRAY);
-        bot.setTranslateX(20);
-        bot.setTranslateY(-10);
 
         return entityBuilder()
                 .type(Entities.PLAYER)
@@ -48,13 +46,16 @@ public class Factory implements EntityFactory {
     @Spawns("enemy")
     public Entity newEnemy(SpawnData data) {
         Stats stats = Stats.getInstance();
+
         return entityBuilder()
                 .type(Entities.ENEMY)
                 .from(data)
-                .with(new FollowComponent(FXGL.getGameWorld().getSingleton(Entities.PLAYER), 50, 0, 0))
-                .bbox(new HitBox(BoundingShape.box(40, 40)))
-                .view("enemy_lvl" + stats.getEnemyLvl() + ".png")
+                .zIndex(-2)
                 .collidable()
+                .with(new FollowComponent(FXGL.getGameWorld().getSingleton(Entities.PLAYER), 50, 50, 200))
+                .with(new EnemySensor())
+                .bbox(new HitBox(BoundingShape.circle(30)))
+                .view("enemy_lvl" + stats.getEnemyLvl() + ".png")
                 .build();
     }
 
@@ -67,12 +68,46 @@ public class Factory implements EntityFactory {
         return entityBuilder()
                 .type(Entities.PROJECTILE)
                 .from(data)
+                .zIndex(-2)
                 .viewWithBBox(view)
                 .collidable()
                 .with(new ProjectileComponent(input.getVectorToMouse(getGameWorld().getSingleton(Entities.PLAYER).getPosition()), bulletSpeed))
                 .with(new OffscreenCleanComponent())
-                .bbox(new HitBox(BoundingShape.box(10, 10)))
+                .build();
+    }
+
+    @Spawns("enemy_projectile")
+    public Entity newEnemy_Projectile(SpawnData data) {
+        Stats stats = Stats.getInstance();
+
+        Point2D p = stats.getCenter();
+
+        var view = new Circle(10, Color.RED);
+        view.setStroke(Color.GRAY);
+        int bulletSpeed = Stats.getInstance().getBulletSpeed();
+        return entityBuilder()
+                .type(Entities.ENEMY_PROJECTILE)
+                .from(data)
+                .viewWithBBox(view)
+                .collidable()
+                .with(new ProjectileComponent(p, bulletSpeed))
+                .with(new OffscreenCleanComponent())
                 .zIndex(-10)
+                .build();
+    }
+
+    @Spawns("enemy_triangle")
+    public Entity newEnemy_Triangle(SpawnData data) {
+
+        return entityBuilder()
+                .type(Entities.ENEMY)
+                .from(data)
+                .zIndex(-2)
+                .collidable()
+                .with(new FollowComponent(FXGL.getGameWorld().getSingleton(Entities.PLAYER), 50, 0, 0))
+                .with(new AutoRotationComponent())
+                .bbox(new HitBox(BoundingShape.circle(30)))
+                .view("triangle.png")
                 .build();
     }
 
@@ -120,6 +155,30 @@ public class Factory implements EntityFactory {
                 .type(Entities.FOOD_OCTAGON)
                 .from(data)
                 .view("sus.png")
+                .build();
+    }
+
+    @Spawns("med_big")
+    public Entity newMed_Big(SpawnData data) {
+
+        return entityBuilder()
+                .type(Entities.MED_BIG)
+                .from(data)
+                .bbox(new HitBox(BoundingShape.box(50, 50)))
+                .view("med_big.png")
+                .collidable()
+                .build();
+    }
+
+    @Spawns("med_small")
+    public Entity newMed_Small(SpawnData data) {
+
+        return entityBuilder()
+                .type(Entities.MED_SMALL)
+                .from(data)
+                .bbox(new HitBox(BoundingShape.box(50, 50)))
+                .view("med_small.png")
+                .collidable()
                 .build();
     }
 }
