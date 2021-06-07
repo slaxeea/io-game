@@ -9,7 +9,7 @@ import javafx.geometry.Point2D;
 /**
  * author simon kappeler Created At: 31.05.2021
  */
-// Makes the enemy aim at the player and shoot if hes close enough
+// Makes the enemy aim at the player and shoot if he's close enough
 public class EnemySensor extends Component {
 
     int count = 0;

@@ -18,6 +18,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -140,9 +141,18 @@ public class Stats {
         }
     }
 
-    // Todo (maybe) add a real "Game Over" Screen
+    // Display a game over thing
     public void youDead() {
-        System.exit(0);
+        FXGL.getGameScene().clearGameViews();
+        FXGL.getGameScene().clearUINodes();
+        FXGL.getGameController().pauseEngine();
+
+        var over = FXGL.getAssetLoader().loadTexture("over.png");
+        over.setTranslateX((stats.getWidth() / 2) - 504);
+        over.setTranslateY(stats.getHeight() / 2);
+
+        FXGL.getGameScene().addUINode(over);
+
     }
 
     public void randomFood() {
