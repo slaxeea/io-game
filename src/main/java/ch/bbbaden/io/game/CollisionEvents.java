@@ -61,6 +61,13 @@ public class CollisionEvents {
             stats.checkIfDead();
             stats.shake();
         });
+        onCollisionBegin(Entities.PLAYER, Entities.ENEMY_TRIANGLE, (player, rect) -> {
+            FXGL.inc("hp", -5);
+            rect.removeFromWorld();
+            stats.spawnFood("enemy_triangle");
+            stats.checkIfDead();
+            stats.shake();
+        });
 
         // Projectile hits enemy
         onCollisionBegin(Entities.PROJECTILE, Entities.ENEMY, (proj, enemy) -> {
@@ -98,6 +105,14 @@ public class CollisionEvents {
             stats.spawnFood("med_small");
             med.removeFromWorld();
             FXGL.inc("hp", 5);
+        });
+
+        // Player hits Spikey boi
+        onCollisionBegin(Entities.PLAYER, Entities.SPIKEY, (player, spk) -> {
+            FXGL.inc("hp", -(FXGL.geti("hp") + 1));
+            System.out.println("aaaaaaaa");
+            stats.spawnFood("spikey");
+            stats.checkIfDead();
         });
     }
 }

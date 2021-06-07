@@ -140,6 +140,7 @@ public class Stats {
         }
     }
 
+    // Todo (maybe) add a real "Game Over" Screen
     public void youDead() {
         System.exit(0);
     }

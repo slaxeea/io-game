@@ -179,4 +179,16 @@ public class Factory implements EntityFactory {
                 .collidable()
                 .build();
     }
+
+    @Spawns("spikey")
+    public Entity newSpikey(SpawnData data) {
+
+        return entityBuilder()
+                .type(Entities.SPIKEY)
+                .from(data)
+                .bbox(new HitBox(BoundingShape.box(50, 50)))
+                .view("spikey.png")
+                .collidable()
+                .build();
+    }
 }

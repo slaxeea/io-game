@@ -19,14 +19,14 @@ import java.util.Random;
  * author simon kappeler Created At: 26.04.2021
  */
 public class Starter extends GameApplication {
-
+    
     private boolean autofire = false;
     private int autofireCount = 0;
     private boolean amg = false;
     private Stats stats = Stats.getInstance();
     int fps;
     long lastTime;
-
+    
     @Override
     // Initialize the Settings
     protected void initSettings(GameSettings settings) {
@@ -36,23 +36,24 @@ public class Starter extends GameApplication {
         settings.setHeight(stats.getHeight());
         settings.setWidth(stats.getWidth());
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }
-
+    
     @Override
     // Initialize the game and spawn stuff
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.WHITE);
         getGameWorld().addEntityFactory(new Factory());
-
+        
         spawn("player", getAppWidth() / 2, getAppHeight() / 2 - 30);
         stats.spawnFood("enemy");
         stats.spawnFood("enemy");
+        stats.spawnFood("spikey");
         stats.randomFood();
     }
-
+    
     @Override
     // Initialize player input
     protected void initInput() {
@@ -87,19 +88,19 @@ public class Starter extends GameApplication {
             spawn("projectile", x, y);
         });
     }
-
+    
     @Override
     // Initialize the collision Events from CollisionEvents.java
     protected void initPhysics() {
         new CollisionEvents().initphysics();
     }
-
+    
     @Override
     // Make the GUI
     protected void initUI() {
         new GUI();
     }
-
+    
     @Override
     // Initialize the Variables which we want FXGL to update itself
     protected void initGameVars(Map<String, Object> vars) {
@@ -108,7 +109,7 @@ public class Starter extends GameApplication {
         vars.put("hp", 10);
         vars.put("fps", 0);
     }
-
+    
     @Override
     // Main game loop
     protected void onUpdate(double tpf) {
