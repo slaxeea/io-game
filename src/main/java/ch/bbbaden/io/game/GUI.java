@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 /**
  * author simon kappeler Created At: 10.05.2021
  */
+// Create the gui in a seperate file, its too long for Start.java
 public class GUI {
 
     public GUI() {

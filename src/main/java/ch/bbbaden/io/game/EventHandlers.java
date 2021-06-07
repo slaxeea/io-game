@@ -1,8 +1,6 @@
 package ch.bbbaden.io.game;
 
 import com.almasb.fxgl.dsl.FXGL;
-import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
-import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -12,6 +10,7 @@ import javafx.event.EventHandler;
  */
 public class EventHandlers {
 
+    // Singleton EventHandlers
     private static EventHandlers evt = new EventHandlers();
 
     public static EventHandlers getInstance() {
@@ -19,6 +18,7 @@ public class EventHandlers {
     }
     Stats stats = Stats.getInstance();
 
+    // take one upgrade token away
     public void minusToken() {
         int newTokens = stats.getUpgradeTokens();
         newTokens--;
@@ -26,6 +26,7 @@ public class EventHandlers {
         stats.setUpgradeTokens(newTokens);
         stats.changeBackgroundColour();
     }
+
     EventHandler onUpgradeSpeed = new EventHandler() {
         @Override
         public void handle(Event t) {

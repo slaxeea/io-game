@@ -23,6 +23,10 @@ import javafx.scene.paint.Color;
 /**
  * author simon kappeler Created At: 03.05.2021
  */
+// Singleton to store game variables etc.
+// really not the best solution, but it works and i could not think of a better
+// (and simpler) solution. So Singleton it is!
+// I hope the things here are self-explanatory, i am not going to comment them all
 public class Stats {
 
     private static Stats stats = new Stats();
@@ -38,11 +42,13 @@ public class Stats {
     private int enemyLvl = 1;
 
     public Stats() {
+        // Set Screensize on creation
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         height = (int) (screen.getHeight() - ((screen.getHeight() / 100) * 20));
         width = (int) (screen.getWidth() - ((screen.getWidth() / 100) * 20));
     }
 
+    // Singleton stuff
     public static Stats getInstance() {
         return stats;
     }
@@ -200,8 +206,10 @@ public class Stats {
         return new Point2D(x, y);
     }
 
+    // Shake the screen if the player is hit
     public void shake() {
         Viewport viewport = getGameScene().getViewport();
+        // (im in love with this fxgl feature)
         viewport.shake(1, 1);
     }
 }

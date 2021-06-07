@@ -1,6 +1,5 @@
 package ch.bbbaden.io.game;
 
-import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
 
@@ -14,12 +13,10 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -27,6 +24,7 @@ import javafx.scene.shape.*;
 /**
  * author simon kappeler Created At: 26.04.2021
  */
+// Instructions on what to do when an enity is spawned
 public class Factory implements EntityFactory {
 
     @Spawns("player")

@@ -52,6 +52,8 @@ public class CollisionEvents {
             stats.checkIfDead();
             stats.shake();
         });
+
+        // Player hits enemy
         onCollisionBegin(Entities.PLAYER, Entities.ENEMY, (player, rect) -> {
             FXGL.inc("hp", -5);
             rect.removeFromWorld();
@@ -68,6 +70,8 @@ public class CollisionEvents {
             FXGL.inc("score", 10);
             stats.incUpgradeScore(5);
         });
+
+        // Projectile hits enemy
         onCollisionBegin(Entities.PROJECTILE, Entities.ENEMY_TRIANGLE, (proj, enemy) -> {
             proj.removeFromWorld();
             enemy.removeFromWorld();

@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
  */
 public class ColourLib {
 
+    // Define all the colours we want to use as background
     private Color[] colourArray = {
         Color.LAVENDERBLUSH,
         Color.LIGHTCYAN,
@@ -24,6 +25,7 @@ public class ColourLib {
         Color.LIGHTSALMON
     };
 
+    // Return a random colour to set to background
     public Color getColour() {
         Random r = new Random();
         int index = r.nextInt(colourArray.length - 1);
