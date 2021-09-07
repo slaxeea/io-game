@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.Entity;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Random;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -151,7 +152,27 @@ public class Stats {
         over.setTranslateX((stats.getWidth() / 2) - 504);
         over.setTranslateY(stats.getHeight() / 2);
 
+        Button close = new Button();
+        Button restart = new Button();
+        stats.newButton(close, "Ok", (stats.getHeight() / 2) - 160, new EventHandler() {
+            @Override
+            public void handle(Event t) {
+                System.exit(0);
+            }
+        });
+        stats.newButton(restart, "Restart", (stats.getHeight() / 2) - 160, new EventHandler() {
+            @Override
+            public void handle(Event t) {
+                FXGL.getGameController().startNewGame();
+                FXGL.getGameController().resumeEngine();
+            }
+        });
+
         FXGL.getGameScene().addUINode(over);
+        close.setTranslateX((stats.getWidth() / 2) - 80);
+        restart.setTranslateX((stats.getWidth() / 2) + 40);
+        close.setDisable(false);
+        restart.setDisable(false);
 
     }
 

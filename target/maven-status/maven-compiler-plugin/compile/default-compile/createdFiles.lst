@@ -1,6 +1,8 @@
 ch\bbbaden\io\game\GUI.class
+ch\bbbaden\io\game\Stats$1.class
 ch\bbbaden\io\game\EventHandlers$2.class
 ch\bbbaden\io\game\EventHandlers$4.class
+ch\bbbaden\io\game\Stats$2.class
 ch\bbbaden\io\game\EventHandlers$6.class
 ch\bbbaden\io\game\EnemySensor.class
 ch\bbbaden\io\game\EventHandlers$1.class
